@@ -18,12 +18,21 @@ Developer Pushes Code to GitHub
    └─────────────────────┘
 
 Jenkins Server
-1. Install Jenkins
-On Ubuntu EC2
+1. Install Jenkins On Ubuntu EC2
+
 http://<ec2-public-ip>:8080
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
 Jenkins Plugins to Install
+
 Configure Jenkins Tools and Credentials
+    Credentials Required
+    GitHub Personal Access Token
+    Docker Hub Username/Password
+    AWS Access Key and Secret Key
+    kubeconfig (optional)
+Add under: Manage Jenkins → Credentials
+
 Configure GitHub Webhook
    http://<jenkins-public-ip>:8080/github-webhook/
    
