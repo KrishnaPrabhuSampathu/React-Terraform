@@ -17,7 +17,27 @@ Developer Pushes Code to GitHub
    │ 6. Deploy to EKS    │
    └─────────────────────┘
 
+Jenkins Server
+1. Install Jenkins
+On Ubuntu EC2
+http://<ec2-public-ip>:8080
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+Jenkins Plugins to Install
+Configure Jenkins Tools and Credentials
+Configure GitHub Webhook
+   http://<jenkins-public-ip>:8080/github-webhook/
    
+2. Jenkins Prerequisites for Terraform
+    Install Terraform on the Jenkins server:
+    Docker
+    AWS CLI
+    kubectl
+    Node.js (if needed for tests)
+    Git
+    Java (for Jenkins itself)
+
+----------------------------------------------------------
+
 1. Dockerize the React Application
 docker build -t trend-app:latest .
 docker run -d -p 3000:80 --name trend-app trend-app:latest
@@ -43,20 +63,10 @@ kubectl get deployments
 kubectl get pods
 kubectl get svc
 kubectl get svc trend-app-service
+ EXTERNAL-IP: a1b2c3d4e5.us-east-1.elb.amazonaws.com
 
-6. Install Jenkins
-On Ubuntu EC2
-http://<ec2-public-ip>:8080
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-Jenkins Plugins to Install
-Configure Jenkins Tools and Credentials
-Configure GitHub Webhook
-   http://<jenkins-public-ip>:8080/github-webhook/
-   
-7. Jenkins Prerequisites for Terraform
-Install Terraform on the Jenkins server:
 
-8. Monitoring Setup (Prometheus + Grafana)
+6. Monitoring Setup (Prometheus + Grafana)
 Install via Helm
   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   helm repo update
