@@ -27,5 +27,27 @@ kubectl get pods
 kubectl get svc
 kubectl get svc trend-app-service
 
-6. Jenkins Prerequisites for Terraform
+6. Install Jenkins
+On Ubuntu EC2
+http://<ec2-public-ip>:8080
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+Jenkins Plugins to Install
+Configure Jenkins Tools and Credentials
+Configure GitHub Webhook
+   http://<jenkins-public-ip>:8080/github-webhook/
+   
+7. Jenkins Prerequisites for Terraform
 Install Terraform on the Jenkins server:
+
+8. Monitoring Setup (Prometheus + Grafana)
+Install via Helm
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  helm repo update
+  helm install monitoring prometheus-community/kube-prometheus-stack
+kubectl get pods -n default
+kubectl port-forward svc/monitoring-grafana 3001:80
+Open: http://localhost:3001
+ Default username: admin
+ Retrieve password:
+  kubectl get secret monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+    
