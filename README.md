@@ -1,6 +1,23 @@
 # React-Terraform
 Application by Terraform
 
+
+Developer Pushes Code to GitHub
+            ↓
+       GitHub Webhook
+            ↓
+          Jenkins
+            ↓
+   ┌─────────────────────┐
+   │ 1. Checkout Code    │
+   │ 2. Terraform Apply  │
+   │ 3. Build React App  │
+   │ 4. Build Docker Img │
+   │ 5. Push to DockerHub│
+   │ 6. Deploy to EKS    │
+   └─────────────────────┘
+
+   
 1. Dockerize the React Application
 docker build -t trend-app:latest .
 docker run -d -p 3000:80 --name trend-app trend-app:latest
