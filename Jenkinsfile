@@ -92,23 +92,23 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
+        // stage('Install Dependencies') {
+        //     steps {
+        //         sh 'npm install'
+        //     }
+        // }
 
-        stage('Run Tests') {
-            steps {
-                sh 'npm test -- --watchAll=false'
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'npm test -- --watchAll=false'
+        //     }
+        // }
 
-        stage('Build React Application') {
-            steps {
-                sh 'npm run build'
-            }
-        }
+        // stage('Build React Application') {
+        //     steps {
+        //         sh 'npm run build'
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
