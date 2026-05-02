@@ -46,6 +46,33 @@ Configure GitHub Webhook
     Java (for Jenkins itself)
 
 ----------------------------------------------------------
+Required flow:
+
+PHASE 1: Terraform Infrastructure
+ create main.tf that provisions:
+    VPC
+    IAM roles
+    EC2 instance (Jenkins server)
+
+PHASE 2: Jenkins Setup
+On EC2 (created by Terraform):
+ Install:
+    Jenkins
+    Docker
+    Git
+    Kubernetes CLI (kubectl)
+
+ Install Jenkins plugins:
+    Git
+    Docker
+    Pipeline
+    Kubernetes    
+
+PHASE 3: Kubernetes on AWS EKS  
+ Create EKS cluster (Terraform / eksctl / console)
+ Verify cluster:  
+    kubectl get nodes
+
 
 1. Dockerize the React Application
 docker build -t trend-app:latest .
@@ -87,3 +114,5 @@ Open: http://localhost:3001
  Retrieve password:
   kubectl get secret monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
     
+
+-------------------------------------------
