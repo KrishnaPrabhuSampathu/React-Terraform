@@ -27,7 +27,7 @@ pipeline {
             steps {
                 git branch: 'main', 
                 credentialsId: 'github-creds',
-                url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
+                url: 'https://github.com/KrishnaPrabhuSampathu/React-Terraform.git'
             }
         }
      
