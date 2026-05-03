@@ -25,57 +25,58 @@ pipeline {
     stages {
         stage('Checkout Source') {
             steps {
-                git branch: 'main', \
-                    url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
+                git branch: 'main', 
+                credentialsId: 'github-creds',
+                url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
             }
         }
 
-        stage('Terraform Init') {
-            steps {
-                dir('terraform') {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: AWS_CREDENTIALS_ID
-                    ]]) {
-                        sh 'terraform init'
-                    }
-                }
-            }
-        }
+        // stage('Terraform Init') {
+        //     steps {
+        //         dir('terraform') {
+        //             withCredentials([[
+        //                 $class: 'AmazonWebServicesCredentialsBinding',
+        //                 credentialsId: AWS_CREDENTIALS_ID
+        //             ]]) {
+        //                 sh 'terraform init'
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Terraform Validate') {
-            steps {
-                dir('terraform') {
-                    sh 'terraform validate'
-                }
-            }
-        }
+        // stage('Terraform Validate') {
+        //     steps {
+        //         dir('terraform') {
+        //             sh 'terraform validate'
+        //         }
+        //     }
+        // }
 
-        stage('Terraform Plan') {
-            steps {
-                dir('terraform') {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: AWS_CREDENTIALS_ID
-                    ]]) {
-                        sh 'terraform plan -out=tfplan'
-                    }
-                }
-            }
-        }
+        // stage('Terraform Plan') {
+        //     steps {
+        //         dir('terraform') {
+        //             withCredentials([[
+        //                 $class: 'AmazonWebServicesCredentialsBinding',
+        //                 credentialsId: AWS_CREDENTIALS_ID
+        //             ]]) {
+        //                 sh 'terraform plan -out=tfplan'
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Terraform Apply') {
-            steps {
-                dir('terraform') {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: AWS_CREDENTIALS_ID
-                    ]]) {
-                        sh 'terraform apply -auto-approve tfplan'
-                    }
-                }
-            }
-        }
+        // stage('Terraform Apply') {
+        //     steps {
+        //         dir('terraform') {
+        //             withCredentials([[
+        //                 $class: 'AmazonWebServicesCredentialsBinding',
+        //                 credentialsId: AWS_CREDENTIALS_ID
+        //             ]]) {
+        //                 sh 'terraform apply -auto-approve tfplan'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Update kubeconfig') {
             steps {

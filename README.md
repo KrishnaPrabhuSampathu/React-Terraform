@@ -1,4 +1,7 @@
 # React-Terraform
+
+Jenkins server: jenkins-app-server
+
 Application by Terraform
 
 
