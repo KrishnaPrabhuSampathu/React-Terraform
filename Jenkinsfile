@@ -95,20 +95,45 @@ pipeline {
             }
         }        
 
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         sh 'kubectl apply -f deployment.yaml'
+        //         sh 'kubectl apply -f service.yaml'
+        //         sh 'kubectl rollout status deployment/trend-app'
+        //     }
+        // }
+
+        // stage('Verify Deployment') {
+        //     steps {
+        //         sh 'kubectl get pods'
+        //         sh 'kubectl get svc'
+        //     }
+        // }
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
-                sh 'kubectl rollout status deployment/trend-app'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: AWS_CREDENTIALS_ID
+                ]]) {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                    sh 'kubectl rollout status deployment/trend-app'
+                }
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: AWS_CREDENTIALS_ID
+                ]]) {
+                    sh 'kubectl get pods'
+                    sh 'kubectl get svc'
+                }
             }
-        }
+        }        
     }
 
     post {
