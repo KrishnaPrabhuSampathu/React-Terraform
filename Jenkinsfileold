@@ -1,16 +1,11 @@
 pipeline {
-    agent {
-        docker {
-            image 'amazon/aws-cli:2.15.0'
-            args '-u root'
-        }
-    }
+    agent any
 
     tools {
         nodejs 'NodeJS'
     }
 
-    environment {
+    environment {   
         AWS_REGION = 'us-east-1'
         CLUSTER_NAME = 'trend-eks-cluster'
         DOCKER_IMAGE = 'krishnaprabhu616/trend-app:latest'
@@ -28,31 +23,36 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Source') {
             steps {
-                git branch: 'main',
-                    credentialsId: 'github-creds',
-                    url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
+                git branch: 'main', 
+                credentialsId: 'github-creds',
+                url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
             }
         }
 
-        stage('Install kubectl') {
+        stage('Install AWS CLI & Kubectl') {
             steps {
                 sh '''
                     set -e
 
+                    echo "Installing AWS CLI..."
+                    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
+                    apt-get update && apt-get install -y unzip curl || true
+                    unzip awscliv2.zip
+                    sudo ./aws/install
+                    aws --version
+
                     echo "Installing kubectl..."
                     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                     chmod +x kubectl
-                    mv kubectl /usr/local/bin/
-
+                    sudo mv kubectl /usr/local/bin/
                     kubectl version --client
                 '''
             }
-        }
+        }        
 
-        stage('Configure kubeconfig') {
+        stage('Update kubeconfig') {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
@@ -66,6 +66,24 @@ pipeline {
                 }
             }
         }
+
+        // stage('Install Dependencies') {
+        //     steps {
+        //         sh 'npm install'
+        //     }
+        // }
+
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'npm test -- --watchAll=false'
+        //     }
+        // }
+
+        // stage('Build React Application') {
+        //     steps {
+        //         sh 'npm run build'
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
@@ -83,31 +101,27 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                    kubectl apply -f deployment.yaml
-                    kubectl apply -f service.yaml
-                    kubectl rollout status deployment/trend-app
-                '''
+                sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f service.yaml'
+                sh 'kubectl rollout status deployment/trend-app'
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh '''
-                    kubectl get pods
-                    kubectl get svc
-                '''
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Application deployed successfully to Amazon EKS.'
+            echo 'Application deployed successfully to Amazon EKS.'
         }
 
         failure {
-            echo '❌ Pipeline failed. Check logs for details.'
+            echo 'Pipeline failed. Check logs for details.'
         }
 
         always {
