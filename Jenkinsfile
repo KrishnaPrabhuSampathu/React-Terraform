@@ -71,13 +71,29 @@ pipeline {
             }
         }
 
+        // stage('Push Docker Image') {
+        //     steps {
+        //         withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: '']) {
+        //             sh 'docker push ${DOCKER_IMAGE}'
+        //         }
+        //     }
+        // }
+
         stage('Push Docker Image') {
             steps {
-                withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: '']) {
-                    sh 'docker push ${DOCKER_IMAGE}'
+                withCredentials([usernamePassword(
+                    credentialsId: DOCKER_CREDENTIALS_ID,
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push ${DOCKER_IMAGE}
+                        docker logout
+                    '''
                 }
             }
-        }
+        }        
 
         stage('Deploy to Kubernetes') {
             steps {
