@@ -103,12 +103,6 @@ pipeline {
         //     }
         // }
 
-        // stage('Verify Deployment') {
-        //     steps {
-        //         sh 'kubectl get pods'
-        //         sh 'kubectl get svc'
-        //     }
-        // }
 
         stage('Deploy to Kubernetes') {
             steps {
