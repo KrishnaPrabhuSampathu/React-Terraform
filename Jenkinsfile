@@ -31,34 +31,41 @@ pipeline {
             }
         }
 
-        stage('Fix Permissions & Install Dependencies') {
+        stage('Fix Dependencies (No sudo version)') {
             steps {
                 sh '''
                     set -e
 
-                    echo "Checking sudo access..."
-                    sudo whoami || true
+                    echo "Checking tools..."
 
-                    echo "Installing unzip if missing..."
-                    sudo apt-get update -y || true
-                    sudo apt-get install -y unzip curl || true
-
-                    echo "Installing AWS CLI..."
-                    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-                    unzip awscliv2.zip
-                    sudo ./aws/install
+                    # AWS CLI install
+                    if ! command -v aws &> /dev/null; then
+                        echo "Installing AWS CLI..."
+                        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
+                        unzip awscliv2.zip
+                        ./aws/install --update
+                    else
+                        echo "AWS CLI already installed"
+                    fi
 
                     aws --version
 
-                    echo "Installing kubectl..."
-                    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                    chmod +x kubectl
-                    sudo mv kubectl /usr/local/bin/
+                    # kubectl install
+                    if ! command -v kubectl &> /dev/null; then
+                        echo "Installing kubectl..."
+                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        mkdir -p $HOME/bin
+                        mv kubectl $HOME/bin/
+                        export PATH=$PATH:$HOME/bin
+                    else
+                        echo "kubectl already installed"
+                    fi
 
                     kubectl version --client
                 '''
             }
-        }  
+        }        
 
         stage('Update kubeconfig') {
             steps {
