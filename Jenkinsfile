@@ -31,52 +31,26 @@ pipeline {
             }
         }
 
-        // stage('Terraform Init') {
-        //     steps {
-        //         dir('terraform') {
-        //             withCredentials([[
-        //                 $class: 'AmazonWebServicesCredentialsBinding',
-        //                 credentialsId: AWS_CREDENTIALS_ID
-        //             ]]) {
-        //                 sh 'terraform init'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Install AWS CLI & Kubectl') {
+            steps {
+                sh '''
+                    set -e
 
-        // stage('Terraform Validate') {
-        //     steps {
-        //         dir('terraform') {
-        //             sh 'terraform validate'
-        //         }
-        //     }
-        // }
+                    echo "Installing AWS CLI..."
+                    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
+                    apt-get update && apt-get install -y unzip curl || true
+                    unzip awscliv2.zip
+                    sudo ./aws/install
+                    aws --version
 
-        // stage('Terraform Plan') {
-        //     steps {
-        //         dir('terraform') {
-        //             withCredentials([[
-        //                 $class: 'AmazonWebServicesCredentialsBinding',
-        //                 credentialsId: AWS_CREDENTIALS_ID
-        //             ]]) {
-        //                 sh 'terraform plan -out=tfplan'
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Terraform Apply') {
-        //     steps {
-        //         dir('terraform') {
-        //             withCredentials([[
-        //                 $class: 'AmazonWebServicesCredentialsBinding',
-        //                 credentialsId: AWS_CREDENTIALS_ID
-        //             ]]) {
-        //                 sh 'terraform apply -auto-approve tfplan'
-        //             }
-        //         }
-        //     }
-        // }
+                    echo "Installing kubectl..."
+                    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                    chmod +x kubectl
+                    sudo mv kubectl /usr/local/bin/
+                    kubectl version --client
+                '''
+            }
+        }        
 
         stage('Update kubeconfig') {
             steps {
