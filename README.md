@@ -7,7 +7,7 @@ Application by Terraform
 
 Developer Pushes Code to GitHub
             ↓
-       GitHub Webhook tt
+       GitHub Webhook 
             ↓
           Jenkins
             ↓
