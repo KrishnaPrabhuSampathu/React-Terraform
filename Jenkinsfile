@@ -30,42 +30,43 @@ pipeline {
                 url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
             }
         }
-
-        stage('Fix Dependencies (No sudo version)') {
+        
+        stage('Fix Dependencies (No sudo, No unzip dependency)') {
             steps {
                 sh '''
                     set -e
 
-                    echo "Checking tools..."
+                    echo "Checking AWS CLI..."
 
-                    # AWS CLI install
                     if ! command -v aws &> /dev/null; then
-                        echo "Installing AWS CLI..."
-                        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-                        unzip awscliv2.zip
-                        ./aws/install --update
-                    else
-                        echo "AWS CLI already installed"
+                        echo "Installing AWS CLI using pip (NO unzip needed)..."
+
+                        # install AWS CLI v1 using Python (no unzip required)
+                        python3 -m pip install --user awscli
+
+                        export PATH=$PATH:$HOME/.local/bin
                     fi
 
                     aws --version
 
-                    # kubectl install
+                    echo "Checking kubectl..."
+
                     if ! command -v kubectl &> /dev/null; then
                         echo "Installing kubectl..."
+
                         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
                         chmod +x kubectl
                         mkdir -p $HOME/bin
                         mv kubectl $HOME/bin/
+
                         export PATH=$PATH:$HOME/bin
-                    else
-                        echo "kubectl already installed"
                     fi
 
-                    kubectl version --client
+                    kubectl version --client || true
                 '''
             }
-        }        
+        }     
 
         stage('Update kubeconfig') {
             steps {
