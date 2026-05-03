@@ -30,44 +30,7 @@ pipeline {
                 url: 'https://github.com/KrishnaPrabhuSampathu/Trend.git'
             }
         }
-
-        stage('Fix Dependencies (Fully No-Sudo Compatible)') {
-            steps {
-                sh '''
-                    set -e
-
-                    echo "Checking AWS CLI..."
-
-                    if ! command -v aws &> /dev/null; then
-                        echo "Installing AWS CLI binary (NO unzip, NO pip)..."
-
-                        # fallback method: direct binary install via curl
-                        curl -L "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-
-                        # since unzip is missing, try python zip module (works on most Jenkins agents)
-                        python3 -c "import zipfile; zipfile.ZipFile('awscliv2.zip').extractall('.')"
-
-                        ./aws/install --update --bin-dir $HOME/bin
-
-                        export PATH=$PATH:$HOME/bin
-                    fi
-
-                    aws --version || echo "AWS CLI check skipped"
-
-                    echo "Checking kubectl..."
-
-                    if ! command -v kubectl &> /dev/null; then
-                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                        chmod +x kubectl
-                        mkdir -p $HOME/bin
-                        mv kubectl $HOME/bin/
-                        export PATH=$PATH:$HOME/bin
-                    fi
-
-                    kubectl version --client || true
-                '''
-            }
-        }          
+     
 
         stage('Update kubeconfig') {
             steps {
