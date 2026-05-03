@@ -1,6 +1,17 @@
 # React-Terraform
 
-Jenkins server: jenkins-app-server
+---------------------------------------
+Jenkins server:
+Public IP: 54.165.22.21
+Private IP: 172.31.9.24
+Instance ID:  i-02cbb3b951d3ddd1c 
+---------------------------------------
+TST server (EKS connected): 
+Public IP: 54.161.168.38
+Private IP: 172.31.43.153
+Instance ID: i-0a84f726369012cae
+--------------------------------------
+
 
 Application by Terraform
 
