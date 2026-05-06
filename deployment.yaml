@@ -12,6 +12,10 @@ spec:
       labels:
         app: trend-app
     spec:
+      nodeSelector:
+        karpenter.sh/nodepool: general-purpose   
+      tolerations:
+      - operator: "Exists"   
       containers:
       - name: trend-app
         image: krishnaprabhu616/trend-app:latest
