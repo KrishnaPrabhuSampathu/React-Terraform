@@ -5,6 +5,11 @@ Jenkins server:
 Public IP: 54.165.22.21
 Private IP: 172.31.9.24
 Instance ID:  i-02cbb3b951d3ddd1c 
+|
+New server: jenkins-app-server
+Public IP: 35.172.231.35
+Private IP: 10.0.101.122
+Instance ID:  i-07b8cbadf25798a4d
 ---------------------------------------
 TST server (EKS connected): 
 Public IP: 54.161.168.38
